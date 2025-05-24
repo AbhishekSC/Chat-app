@@ -11,9 +11,8 @@ import messageRoutes from "./routes/message.route.js";
 
 dotenv.config();
 
-
 // dev-server.js
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // Use dynamic import for ES modules
 // import('./server.js').catch(err => {
@@ -35,18 +34,22 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 // ***To enable CORS (Cross-Origin Resource Sharing)***
 const corsOptions = {
-  origin: "http://localhost:5173", // Your frontend origin
-  credentials: true, // Allow credentials
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow the necessary HTTP methods
+  origin:
+    process.env.NODE_ENV === "production"
+      ? process.env.FRONTEND_URL
+      : "http://localhost:5173",
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
     "Content-Type",
     "Authorization",
     "X-Requested-With",
     "Accept",
     "Origin",
-  ], // Add any custom headers you need
-  exposedHeaders: ["Authorization"], // Add any headers you need to expose
+  ],
+  exposedHeaders: ["Authorization"],
 };
+
 app.use(cors(corsOptions));
 // ***To parse cookies***
 app.use(cookieParser());
