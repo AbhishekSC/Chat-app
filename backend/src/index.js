@@ -54,9 +54,9 @@ app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 // ***To enable CORS (Cross-Origin Resource Sharing)***
 const corsOptions = {
   origin:
-    process.env.NODE_ENV === "production"
-      ? process.env.FRONTEND_URL
-      : "http://localhost:5173",
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5173"
+      : "https://secretwire.onrender.com", // <-- your frontend domain
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
@@ -68,6 +68,8 @@ const corsOptions = {
   ],
   exposedHeaders: ["Authorization"],
 };
+
+app.use(cors(corsOptions));
 
 app.use(cors(corsOptions));
 // ***To parse cookies***
