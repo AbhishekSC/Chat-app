@@ -10,7 +10,12 @@ const server = createServer(app);
 // Socket.io integration | creating scoketIO server which will listen regular HTTP request and websocket communication(Duplex)
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: [
+      "https://secretwire.onrender.com", // your frontend domain
+      "http://localhost:5173", // for local dev
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
