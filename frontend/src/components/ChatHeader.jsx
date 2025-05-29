@@ -1,10 +1,12 @@
 import { X } from "lucide-react";
 import { useAuthStore } from "../store/UseAuthStore";
 import { useChatStore } from "../store/UseChatStore";
+import {useNavigate} from 'react-router-dom'
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
+    const navigate = useNavigate();
 
   return (
     <div className="p-2.5 border-b border-base-300">
@@ -20,8 +22,12 @@ const ChatHeader = () => {
             </div>
           </div>
 
-          {/* User info */}
-          <div>
+          {/* User info - clickable */}
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() => navigate("/profile")}
+            title="Go to settings"
+          >
             <h3 className="font-medium">{selectedUser.fullName}</h3>
             <p className="text-sm text-base-content/70">
               {onlineUsers.includes(selectedUser._id) ? "Online" : "Offline"}

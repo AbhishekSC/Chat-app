@@ -21,7 +21,11 @@ router.get("/users", isAuthenticated, getAllUsers);
 router.get("/:id", isAuthenticated, getConversationMessages);
 // Delete message route- delete for everyone
 // router.get("/delete/:id", isAuthenticated, deleteMessageForEveryone);
-router.post("/deleteMessageForEveryone/:id", isAuthenticated, deleteMessageForEveryone);
+router.post(
+  "/deleteMessageForEveryone/:id",
+  isAuthenticated,
+  deleteMessageForEveryone
+);
 // Send message route
 router.post("/send/:id", isAuthenticated, sendMessage);
 // router.post("/markAsSeen/:id", isAuthenticated, sendMessage);

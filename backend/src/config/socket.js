@@ -62,7 +62,24 @@ io.on("connection", (socket) => {
       }
     }
   });
-  //TESTING
+
+  /*
+    when user start typing
+    Emit an event to the receiver when the sender starts typing
+  */
+  socket.on("typing", ({ senderId, receiverId }) => {
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("typing", { senderId });
+    }
+  });
+
+  socket.on("stop-typing", ({ senderId, receiverId }) => {
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("stop-typing", { senderId });
+    }
+  });
 
   // When user disconnect
   socket.on("disconnect", () => {

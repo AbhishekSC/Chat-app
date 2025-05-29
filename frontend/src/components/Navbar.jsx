@@ -20,8 +20,11 @@ export default function Navbar() {
               <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
                 <MessageSquare className="w-5 h-5 text-primary" />
               </div>
-              <h1 className="text-lg font-bold">
-                SecretWire {authUser?.user.fullName}
+              <h1 className="text-xl font-extrabold flex items-center gap-2 tracking-tight">
+                <span className="text-primary">SecretWire</span>
+                <span className="text-base-content/60 font-semibold text-base">
+                  {authUser?.user.fullName}
+                </span>
               </h1>
             </Link>
           </div>

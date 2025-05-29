@@ -4,6 +4,9 @@ import { connectToMongoDB } from "./config/db.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { app, server } from "./config/socket.js";
+import morgan from "morgan";
+import fs from "fs";
+import path from "path";
 
 // Importing routers
 import authRoutes from "./routes/auth.route.js";
@@ -15,9 +18,9 @@ dotenv.config();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // Use dynamic import for ES modules
-// import('./server.js').catch(err => {
-//   console.error('Failed to import server:', err);
-// });
+import("./server.js").catch((err) => {
+  console.error("Failed to import server:", err);
+});
 
 // Environment variables
 const PORT = process.env.PORT || 5000;
@@ -26,6 +29,22 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Initialize express app
 // const app = express();
 // Integrating socket.io
+
+// ** Logging
+// Create a write stream (in append mode)
+if (process.env.NODE_ENV !== "production") {
+  const accessLogStream = fs.createWriteStream(
+    path.join(process.cwd(), "access.log"),
+    { flags: "a" }
+  );
+
+  // Use morgan to log requests to the file
+  app.use(morgan("combined", { stream: accessLogStream }));
+}
+// (Optional) Also log to console in production
+else {
+  app.use(morgan("combined"));
+}
 
 // Middlewares:
 // ***To parse JSON requests***

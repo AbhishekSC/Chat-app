@@ -17,6 +17,8 @@ export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
   selectedUser: null,
+  typingStatus: {}, // To track typing status of users
+  unreadMessages: {},
 
   // Status
   messageStatus: {
@@ -141,13 +143,22 @@ export const useChatStore = create((set, get) => ({
     }));
   },
 
+  // user typing setter
+  setTypingStatus: (userId, status) =>
+    set((state) => ({
+      typingStatus: { ...state.typingStatus, [userId]: status },
+    })),
+
+  setUnreadMessage: (userId, value = true) =>
+    set((state) => ({
+      unreadMessages: { ...state.unreadMessages, [userId]: value },
+    })),
+
   subscribeToMessages: () => {
     const { selectedUser } = get();
     const socket = useAuthStore.getState().socket;
 
-    if (!selectedUser) return;
-
-    if (!socket) return;
+    if (!selectedUser || !socket) return;
 
     // TODO : optimize this
     socket.on("new-message", (newMessage) => {
@@ -163,6 +174,11 @@ export const useChatStore = create((set, get) => ({
         }));
       } else {
         ShowMessageNotification(newMessage);
+      }
+
+      // for unread messages
+      if (!selectedUser || selectedUser._id !== newMessage.senderId) {
+        get().setUnreadMessage(newMessage.senderId, true);
       }
 
       // If the chat is opend with the sender of this message, mark as seen
@@ -189,6 +205,14 @@ export const useChatStore = create((set, get) => ({
         }),
       }));
     });
+
+    // Subscribe to user typing event
+    socket.on("typing", ({ senderId }) => {
+      get().setTypingStatus(senderId, true);
+    });
+    socket.on("stop-typing", ({ senderId }) => {
+      get().setTypingStatus(senderId, false);
+    });
   },
 
   unsubscribeFromMessages: () => {
@@ -196,6 +220,8 @@ export const useChatStore = create((set, get) => ({
     socket.off("new-message");
     socket.off("message-deleted");
     socket.off("message-seen");
+    socket.off("typing");
+    socket.off("stop-typing");
   },
 
   // Delete message
@@ -252,5 +278,11 @@ export const useChatStore = create((set, get) => ({
 
   // Setting selected user
   //TODO: optimise this one later
-  setSelectedUser: (user) => set({ selectedUser: user }),
+  // setSelectedUser: (user) => set({ selectedUser: user }),
+  setSelectedUser: (user) => {
+    set({ selectedUser: user });
+    set((state) => ({
+      unreadMessages: { ...state.unreadMessages, [user._id]: false },
+    }));
+  },
 }));

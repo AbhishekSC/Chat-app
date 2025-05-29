@@ -5,8 +5,15 @@ import { Users } from "lucide-react";
 import { useAuthStore } from "../store/UseAuthStore";
 
 export default function Sidebar() {
-  const { getUsers, users, selectedUser, setSelectedUser, messageStatus } =
-    useChatStore();
+  const {
+    typingStatus,
+    getUsers,
+    users,
+    selectedUser,
+    setSelectedUser,
+    messageStatus,
+    unreadMessages,
+  } = useChatStore();
 
   const { onlineUsers } = useAuthStore();
   const [showOnlineUserOnly, setShowOnlineUserOnly] = useState(false);
@@ -74,11 +81,23 @@ export default function Sidebar() {
                   rounded-full ring-2 ring-zinc-900"
                 />
               )}
+              {unreadMessages[user._id] && selectedUser?._id !== user._id && (
+                <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full shadow">
+                  New
+                </span>
+              )}
             </div>
 
             {/* User info - only visible on larger screens */}
             <div className="hidden lg:block text-left min-w-0">
-              <div className="font-medium truncate">{user.fullName}</div>
+              <div className="font-medium truncate flex items-center gap-1">
+                {user.fullName}
+                {typingStatus[user._id] && selectedUser?._id !== user._id && (
+                  <span className="ml-2 text-xs text-emerald-500 animate-pulse">
+                    typing...
+                  </span>
+                )}
+              </div>
               <div className="text-sm text-zinc-400">
                 {onlineUsers.includes(user._id) ? "Online" : "Offline"}
               </div>
