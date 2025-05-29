@@ -12,7 +12,10 @@ const AuthStatus = {
 };
 
 // Defining constants
-const BASE_URL = "http://localhost:5001";
+const BASE_URL =
+  import.meta.env.MODE === "development"
+    ? "http://localhost:5001"
+    : "https://secretwire-backend.onrender.com";
 
 export const useAuthStore = create((set, get) => ({
   // User data
@@ -291,11 +294,11 @@ export const useAuthStore = create((set, get) => ({
     // Set socket
     set({ socket: socket });
 
-    socket.on('getOnlineUsers', (userIds) => {
-      set({onlineUsers: userIds})
-    })
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds });
+    });
   },
-  
+
   disconnectSocket: () => {
     if (get().socket?.connected) {
       get().socket.disconnect();
